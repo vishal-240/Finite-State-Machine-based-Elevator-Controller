@@ -6,7 +6,7 @@ I am currently writing a testbench in VHDL to test the FSM and make it better.
 ## More about the controller
 - The controller manages
   - Motor direction control(Up/Down/Stop)
-  - Safe dooe operations at each floor
+  - Safe door operations at each floor
   - Request handling from both call buttons(outside) and cabin buttons(inside)
   - Scheduling of requests for multiple ones
 - I tried to imitate the real world scenarios by using all these.
