@@ -45,7 +45,7 @@ I am currently writing a testbench in VHDL to test the FSM and make it better.
          ┌──────────┐
          │ DOOR_OPEN_0│
          └───────────┘
-👉 There are many more transitions like this!!
+There are many more transitions like this!!
 
 ## Learnings
 - FSM design and hardware modelling in VHDL
