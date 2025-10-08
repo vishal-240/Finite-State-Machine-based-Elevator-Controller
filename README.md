@@ -17,35 +17,49 @@ I am currently writing a testbench in VHDL to test the FSM and make it better.
 - Motor Control : 2-bit motor signal ( 00 = stop, 10 = up, 01 = down)
 
 ## FSM Design📈
-         ┌──────────┐
-         │  IDLE_0  │◄────────────┐
-         └────┬─────┘             │
-              │ Request Up         │
-              ▼                    │
-         ┌──────────┐              │
-         │MOVING_UP │              │
-         └────┬─────┘              │
-              │ Arrive Floor 1     │
-              ▼                    │
-        ┌────────────┐             │
-        │ DOOR_OPEN_1│             │
-        └────┬───────┘             │
-             │ Timer Expired       │
-             ▼                     │
-         ┌──────────┐              │
-         │  IDLE_1  │◄─────────────┘
-         └────┬─────┘
-              │ Request Down
-              ▼
-         ┌──────────┐
-         │MOVING_DOWN│
-         └────┬─────┘
-              │ Arrive Floor 0
-              ▼
-         ┌──────────┐
-         │ DOOR_OPEN_0│
-         └───────────┘
-There are many more transitions like this!!
+
+```mermaid
+stateDiagram-v2
+    [*] --> IDLE_0 : Reset
+
+    %% Idle States
+    IDLE_0 --> DOOR_OPEN_0 : Request(0)
+    IDLE_0 --> MOVING_UP : Request(1) or Request(2)
+    
+    IDLE_1 --> DOOR_OPEN_1 : Request(1)
+    IDLE_1 --> MOVING_UP : Request(2)
+    IDLE_1 --> MOVING_DOWN : Request(0)
+    
+    IDLE_2 --> DOOR_OPEN_2 : Request(2)
+    IDLE_2 --> MOVING_DOWN : Request(0) or Request(1)
+
+    %% Door Open States
+    DOOR_OPEN_0 --> IDLE_0 : Timer done & No request
+    DOOR_OPEN_0 --> MOVING_UP : Request(1 or 2)
+    
+    DOOR_OPEN_1 --> IDLE_1 : Timer done & No request
+    DOOR_OPEN_1 --> MOVING_UP : Request(2)
+    DOOR_OPEN_1 --> MOVING_DOWN : Request(0)
+    
+    DOOR_OPEN_2 --> IDLE_2 : Timer done & No request
+    DOOR_OPEN_2 --> MOVING_DOWN : Request(0 or 1)
+
+    %% Moving States
+    MOVING_UP --> DOOR_OPEN_1 : Floor=1 & Request(1)
+    MOVING_UP --> DOOR_OPEN_2 : Floor=2 & Request(2)
+    MOVING_UP --> MOVING_DOWN : Reached top & Requests below
+    MOVING_UP --> IDLE_0 : Floor=0 & No request
+    MOVING_UP --> IDLE_1 : Floor=1 & No request
+    MOVING_UP --> IDLE_2 : Floor=2 & No request
+
+    MOVING_DOWN --> DOOR_OPEN_1 : Floor=1 & Request(1)
+    MOVING_DOWN --> DOOR_OPEN_0 : Floor=0 & Request(0)
+    MOVING_DOWN --> MOVING_UP : Reached bottom & Requests above
+    MOVING_DOWN --> IDLE_0 : Floor=0 & No request
+    MOVING_DOWN --> IDLE_1 : Floor=1 & No request
+    MOVING_DOWN --> IDLE_2 : Floor=2 & No request
+````
+![Elevator FSM](fsm_diagram.png)
 
 ## Learnings
 - FSM design and hardware modelling in VHDL
