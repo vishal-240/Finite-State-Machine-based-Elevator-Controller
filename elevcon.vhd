@@ -93,7 +93,7 @@ BEGIN
                         dooropen <= '0';
                     END IF;
                 WHEN MOVING_UP =>
-                    IF (floor_sensor = "00" AND Requests(0) = '1') THEN
+                    IF (floor_sensor = "00" AND Requests(0) = '1') THEN--door open at requested floor
                         next_state <= DOOR_OPEN_0;
                         door_timer <= door_timer + 1;
                         motor <= "00";
@@ -127,7 +127,7 @@ BEGIN
                         next_state <= MOVING_DOWN;
                         motor <= "01";
                         dooropen <= '0';
-                    ELSE
+                    ELSE--no requests, go idle
                         CASE floor_sensor IS
                             WHEN "00" =>
                                 next_state <= IDLE_0;
@@ -199,7 +199,7 @@ BEGIN
                         END CASE;
                     END IF;
                 WHEN DOOR_OPEN_0 =>
-                    IF door_timer < 5 THEN
+                    IF door_timer < 5 THEN--keep door open for 5 cycles
                         next_state <= DOOR_OPEN_0;
                         door_timer <= door_timer + 1;
                         motor <= "00";
